@@ -1,0 +1,2 @@
+rootProject.name='AD430'
+include ':app'
