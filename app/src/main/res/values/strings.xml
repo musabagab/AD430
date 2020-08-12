@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">AD430</string>
+    <string name="validzipcode">Enter a valid zipcode!</string>
+    <string name="enter_your_zip_code">Enter your zip code</string>
 </resources>
