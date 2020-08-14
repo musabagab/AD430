@@ -31,16 +31,20 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
-
+        // Prepare the Recyclerview
         val forecastList: RecyclerView = findViewById(R.id.forecastList)
         forecastList.layoutManager = LinearLayoutManager(this)
-
+        val dailyForecastAdapter = DailyForecastAdapter {
+            val msg = getString(R.string.forecast_clicked_format, it.temp, it.description)
+            Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+        }
+        forecastList.adapter = dailyForecastAdapter
 
         val weeklyForecastObserver = Observer<List<DailyForecast>> { forecastItems ->
-            // TODO: update our list adapter
+            dailyForecastAdapter.submitList(forecastItems)
             Toast.makeText(this, "Loaded items", Toast.LENGTH_SHORT).show()
         }
-
+        // attach the observer to the liveData
         forecastRepository.weeklyForecast.observe(this, weeklyForecastObserver)
     }
 
