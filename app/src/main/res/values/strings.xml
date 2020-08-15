@@ -3,4 +3,6 @@
     <string name="validzipcode">Enter a valid zipcode!</string>
     <string name="enter_your_zip_code">Enter your zip code</string>
     <string name="forecast_clicked_format">Forecast: %1$.2f %2$s</string>
+    <string name="forecast_details">Forecast Details</string>
+    <string name="display_units">Display Units</string>
 </resources>
