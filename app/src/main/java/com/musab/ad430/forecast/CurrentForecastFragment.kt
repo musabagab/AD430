@@ -1,7 +1,6 @@
 package com.musab.ad430.forecast
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.musab.ad430.*
-import com.musab.ad430.details.ForecastDetailsActivity
 
 class CurrentForecastFragment : Fragment() {
 
@@ -27,13 +25,15 @@ class CurrentForecastFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         tempDisplaySettingsManager = TempDisplaySettingsManager(requireContext())
 
 
         val zipcode = arguments!!.getString(KEY_ZIPCODE) ?: ""
+
 
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_current_forecast, container, false)
@@ -59,7 +59,7 @@ class CurrentForecastFragment : Fragment() {
             Toast.makeText(requireContext(), "Loaded items", Toast.LENGTH_SHORT).show()
         }
         // attach the observer to the liveData
-        forecastRepository.weeklyForecast.observe(this, weeklyForecastObserver)
+        forecastRepository.weeklyForecast.observe(requireActivity(), weeklyForecastObserver)
         // load the data
         forecastRepository.loadForecast(zipcode)
 
@@ -67,10 +67,7 @@ class CurrentForecastFragment : Fragment() {
     }
 
     private fun showForecastDetails(forecast: DailyForecast) {
-        val intent = Intent(requireContext(), ForecastDetailsActivity::class.java)
-        intent.putExtra("key_temp", forecast.temp)
-        intent.putExtra("key_description", forecast.description)
-        startActivity(intent)
+        appNavigator.navigateToForecastDetails(forecast)
     }
 
     companion object {

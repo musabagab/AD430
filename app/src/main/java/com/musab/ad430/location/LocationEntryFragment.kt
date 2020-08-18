@@ -13,9 +13,7 @@ import com.musab.ad430.AppNavigator
 import com.musab.ad430.R
 
 
-/**
- * A simple [Fragment] subclass.
- */
+
 class LocationEntryFragment : Fragment() {
 
     private lateinit var appNavigator: AppNavigator
