@@ -8,10 +8,10 @@ import androidx.appcompat.widget.Toolbar
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
-import com.musab.ad430.forecast.CurrentForecastFragmentDirections
-import com.musab.ad430.location.LocationEntryFragmentDirections
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class MainActivity : AppCompatActivity(), AppNavigator {
+
+class MainActivity : AppCompatActivity() {
 
     private lateinit var tempDisplaySettingsManager: TempDisplaySettingsManager
 
@@ -23,35 +23,13 @@ class MainActivity : AppCompatActivity(), AppNavigator {
 
         val navController = findNavController(R.id.nav_host_fragment)
         val appBarConfiguration = AppBarConfiguration(navController.graph)
-        findViewById<Toolbar>(R.id.toolbar).setupWithNavController(
-            navController,
-            appBarConfiguration
+        findViewById<Toolbar>(R.id.toolbar).setTitle(R.string.app_name)
+
+        findViewById<BottomNavigationView>(R.id.bottomNavigationView).setupWithNavController(
+            navController
         )
 
     }
-
-
-    override fun navigateToCurrentForecast(zipCode: String) {
-        val action =
-            LocationEntryFragmentDirections.actionLocationEntryFragmentToCurrentForecastFragment2()
-        findNavController(R.id.nav_host_fragment).navigate(action)
-    }
-
-    override fun navigateToLocationEntry() {
-        val action =
-            CurrentForecastFragmentDirections.actionCurrentForecastFragmentToLocationEntryFragment2()
-        findNavController(R.id.nav_host_fragment).navigate(action)
-    }
-
-    override fun navigateToForecastDetails(forecast: DailyForecast) {
-        val action =
-            CurrentForecastFragmentDirections.actionCurrentForecastFragmentToForecastDetailsFragment(
-                forecast.temp,
-                forecast.description
-            )
-        findNavController(R.id.nav_host_fragment).navigate(action)
-    }
-
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater = menuInflater
