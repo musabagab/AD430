@@ -23,9 +23,7 @@ class LocationRepository(context: Context) {
         }
 
         broadcastSavedZipcode()
-
     }
-
 
     fun saveLocation(location: Location) {
         when (location) {

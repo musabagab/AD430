@@ -16,6 +16,7 @@ import com.musab.ad430.*
 class CurrentForecastFragment : Fragment() {
 
     private lateinit var tempDisplaySettingsManager: TempDisplaySettingsManager
+    private lateinit var locationRepository: LocationRepository
     private val forecastRepository = ForecastRepository()
 
 
@@ -53,6 +54,15 @@ class CurrentForecastFragment : Fragment() {
             dailyForecastAdapter.submitList(forecastItems)
             Toast.makeText(requireContext(), "Loaded items", Toast.LENGTH_SHORT).show()
         }
+
+        locationRepository = LocationRepository(requireContext())
+        val savedLocationObserver = Observer<Location> { savedLocation ->
+            when (savedLocation) {
+                is Location.Zipcode -> forecastRepository.loadForecast(savedLocation.zipcode)
+            }
+        }
+
+        locationRepository.savedLocation.observe(viewLifecycleOwner, savedLocationObserver)
         // attach the observer to the liveData
         forecastRepository.weeklyForecast.observe(requireActivity(), weeklyForecastObserver)
         // load the data
