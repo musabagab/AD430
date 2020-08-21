@@ -1,10 +1,10 @@
 package com.musab.ad430.forecast
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -27,7 +27,6 @@ class WeeklyForecastFragment : Fragment() {
     ): View? {
         tempDisplaySettingsManager = TempDisplaySettingsManager(requireContext())
 
-
         val zipcode = arguments?.getString(KEY_ZIPCODE) ?: ""
 
 
@@ -38,7 +37,6 @@ class WeeklyForecastFragment : Fragment() {
         fab.setOnClickListener {
             showLocationEntry()
         }
-
 
         // Prepare the Recyclerview
         val forecastList: RecyclerView = view.findViewById(R.id.forecastList)
@@ -52,19 +50,25 @@ class WeeklyForecastFragment : Fragment() {
 
         val weeklyForecastObserver = Observer<List<DailyForecast>> { forecastItems ->
             dailyForecastAdapter.submitList(forecastItems)
-            Toast.makeText(requireContext(), "Loaded items", Toast.LENGTH_SHORT).show()
+            Log.d("TAG", "Data loaded from the repo")
         }
+        // attach the observer to the liveData
+        forecastRepository.weeklyForecast.observe(requireActivity(), weeklyForecastObserver)
+
+
         locationRepository = LocationRepository(requireContext())
         val savedLocationObserver = Observer<Location> { savedLocation ->
             when (savedLocation) {
-                is Location.Zipcode -> forecastRepository.loadForecast(savedLocation.zipcode)
+                is Location.Zipcode -> {
+                    Log.d("TAG", "Saved location observer called weekly")
+                    forecastRepository.loadWeeklyForecast(savedLocation.zipcode)
+                }
+
             }
         }
-
         locationRepository.savedLocation.observe(viewLifecycleOwner, savedLocationObserver)
 
-        // attach the observer to the liveData
-        forecastRepository.weeklyForecast.observe(requireActivity(), weeklyForecastObserver)
+
 
 
         return view
