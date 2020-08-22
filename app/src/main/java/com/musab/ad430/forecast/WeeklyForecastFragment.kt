@@ -69,8 +69,6 @@ class WeeklyForecastFragment : Fragment() {
         locationRepository.savedLocation.observe(viewLifecycleOwner, savedLocationObserver)
 
 
-
-
         return view
     }
 

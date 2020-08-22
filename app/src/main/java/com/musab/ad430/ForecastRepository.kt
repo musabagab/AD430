@@ -1,13 +1,19 @@
 package com.musab.ad430
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.musab.ad430.api.CurrentWeather
+import com.musab.ad430.api.createOpenWeatherMapService
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import kotlin.random.Random
 
 class ForecastRepository {
     // CURRENT
-    private val _currentForecast = MutableLiveData<DailyForecast>()
-    val currentForecast: LiveData<DailyForecast> = _currentForecast
+    private val _currentWeather = MutableLiveData<CurrentWeather>()
+    val currentWeather: LiveData<CurrentWeather> = _currentWeather
 
     // WEEKLY
     private val _weeklyForecast = MutableLiveData<List<DailyForecast>>()
@@ -25,9 +31,31 @@ class ForecastRepository {
     }
 
     fun loadCurrentForecast(zipCode: String) {
-        val randomTemp = Random.nextFloat().rem(100) * 100
-        val forecast = DailyForecast(randomTemp, getTempDescription(randomTemp))
-        _currentForecast.value = forecast
+
+        val call = createOpenWeatherMapService().currentWeather(
+            zipCode,
+            "imperial",
+            BuildConfig.OPEN_WEATHER_API_KEY
+        )
+
+
+
+        call.enqueue(object : Callback<CurrentWeather> {
+            override fun onFailure(call: Call<CurrentWeather>, t: Throwable) {
+                Log.e(ForecastRepository::class.java.simpleName, "Error loading current data", t)
+            }
+
+            override fun onResponse(
+                call: Call<CurrentWeather>,
+                response: Response<CurrentWeather>
+            ) {
+                val weatherResponse = response.body()
+                if (weatherResponse != null) {
+                    _currentWeather.value = weatherResponse
+                }
+            }
+
+        })
 
     }
 
