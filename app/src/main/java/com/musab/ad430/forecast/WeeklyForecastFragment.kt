@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.musab.ad430.*
+import com.musab.ad430.api.DailyForecast
+import com.musab.ad430.api.WeeklyForecast
 
 class WeeklyForecastFragment : Fragment() {
 
@@ -48,12 +50,11 @@ class WeeklyForecastFragment : Fragment() {
             }
         forecastList.adapter = dailyForecastAdapter
 
-        val weeklyForecastObserver = Observer<List<DailyForecast>> { forecastItems ->
-            dailyForecastAdapter.submitList(forecastItems)
-            Log.d("TAG", "Data loaded from the repo")
+        val weeklyForecastObserver = Observer<WeeklyForecast> { weeklyForecast ->
+            dailyForecastAdapter.submitList(weeklyForecast.daily)
         }
         // attach the observer to the liveData
-        forecastRepository.weeklyForecast.observe(requireActivity(), weeklyForecastObserver)
+        forecastRepository.weeklyForecast.observe(viewLifecycleOwner, weeklyForecastObserver)
 
 
         locationRepository = LocationRepository(requireContext())
@@ -80,10 +81,13 @@ class WeeklyForecastFragment : Fragment() {
     }
 
     private fun showForecastDetails(forecast: DailyForecast) {
+        val temp = forecast.temp.max
+        val description = forecast.weather[0].description
+
         val action =
             WeeklyForecastFragmentDirections.actionWeeklyForecastFragmentToForecastDetailsFragment(
-                forecast.temp,
-                forecast.description
+                temp,
+                description
             )
 
         findNavController().navigate(action)
