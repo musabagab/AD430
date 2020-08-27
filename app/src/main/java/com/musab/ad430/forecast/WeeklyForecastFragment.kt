@@ -1,10 +1,10 @@
 package com.musab.ad430.forecast
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -29,12 +29,10 @@ class WeeklyForecastFragment : Fragment() {
     ): View? {
         tempDisplaySettingsManager = TempDisplaySettingsManager(requireContext())
 
-        val zipcode = arguments?.getString(KEY_ZIPCODE) ?: ""
-
 
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_weekly_forecast, container, false)
-
+        val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
         val fab: FloatingActionButton = view.findViewById(R.id.locationEntryButton)
         fab.setOnClickListener {
             showLocationEntry()
@@ -51,6 +49,7 @@ class WeeklyForecastFragment : Fragment() {
         forecastList.adapter = dailyForecastAdapter
 
         val weeklyForecastObserver = Observer<WeeklyForecast> { weeklyForecast ->
+            progressBar.visibility = View.GONE
             dailyForecastAdapter.submitList(weeklyForecast.daily)
         }
         // attach the observer to the liveData
@@ -61,7 +60,7 @@ class WeeklyForecastFragment : Fragment() {
         val savedLocationObserver = Observer<Location> { savedLocation ->
             when (savedLocation) {
                 is Location.Zipcode -> {
-                    Log.d("TAG", "Saved location observer called weekly")
+                    progressBar.visibility = View.VISIBLE
                     forecastRepository.loadWeeklyForecast(savedLocation.zipcode)
                 }
 
@@ -92,21 +91,5 @@ class WeeklyForecastFragment : Fragment() {
 
         findNavController().navigate(action)
     }
-
-    companion object {
-        const val KEY_ZIPCODE = "key_zipcode"
-
-        fun newInstance(zipcode: String): WeeklyForecastFragment {
-            val fragment = WeeklyForecastFragment()
-
-            val args = Bundle()
-
-            args.putString(KEY_ZIPCODE, zipcode)
-            fragment.arguments = args
-
-            return fragment
-        }
-    }
-
 
 }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -31,13 +32,21 @@ class CurrentForecastFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_current_forecast, container, false)
         val locationName = view.findViewById<TextView>(R.id.locationName)
         val tempText = view.findViewById<TextView>(R.id.tempText)
+        val emptyText = view.findViewById<TextView>(R.id.emptyText)
+        val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
         val fab: FloatingActionButton = view.findViewById(R.id.locationEntryButton)
         fab.setOnClickListener {
             showLocationEntry()
         }
         // create the observer
         val currentWeatherObserver = Observer<CurrentWeather> { weather ->
-            // update our list adapter
+            // set empty view to gone
+            emptyText.visibility = View.GONE
+            progressBar.visibility = View.GONE
+
+            locationName.visibility = View.VISIBLE
+            tempText.visibility = View.VISIBLE
+
             locationName.text = weather.name
             tempText.text = formatTempForDisplay(
                 weather.forecast.temp,
@@ -51,6 +60,7 @@ class CurrentForecastFragment : Fragment() {
         val savedLocationObserver = Observer<Location> { savedLocation ->
             when (savedLocation) {
                 is Location.Zipcode -> {
+                    progressBar.visibility = View.VISIBLE
                     forecastRepository.loadCurrentForecast(savedLocation.zipcode)
                 }
             }
