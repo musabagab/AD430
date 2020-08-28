@@ -1,4 +1,2 @@
-# AD430
-Nate's android with kotlin course
-
-This is the course code
+# Weather App [MVVM]
+Weather app with MVVm,Kotlin,viewbinding,retrofit,android jetpack
